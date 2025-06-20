@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplicación Bancaria</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>Banco Digital</h1>
+            <div id="user-info">
+                <span id="username-display">Usuario no identificado</span>
+                <button id="logout-btn">Cerrar sesión</button>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="sidebar">
+                <button class="menu-btn active" data-section="accounts">Mis Cuentas</button>
+                <button class="menu-btn" data-section="transfer">Transferencias</button>
+                <button class="menu-btn" data-section="profile">Perfil</button>
+            </div>
+
+            <div class="content-area">
+                <!-- Sección de Cuentas -->
+                <section id="accounts-section" class="content-section active">
+                    <h2>Mis Cuentas</h2>
+                    <div id="accounts-list" class="cards-container">
+                        <!-- Las cuentas se cargarán aquí dinámicamente -->
+                    </div>
+                    <button id="new-account-btn">Abrir nueva cuenta</button>
+                </section>
+
+                <!-- Sección de Transferencias -->
+                <section id="transfer-section" class="content-section">
+                    <h2>Realizar Transferencia</h2>
+                    <form id="transfer-form">
+                        <div class="form-group">
+                            <label for="from-account">Cuenta origen:</label>
+                            <select id="from-account" required></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="to-account">Cuenta destino:</label>
+                            <input type="text" id="to-account" placeholder="Número de cuenta" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="amount">Cantidad:</label>
+                            <input type="number" id="amount" min="0.01" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Descripción:</label>
+                            <input type="text" id="description">
+                        </div>
+                        <button type="submit">Realizar Transferencia</button>
+                    </form>
+                    <div id="transfer-history">
+                        <h3>Historial de Transferencias</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Origen</th>
+                                    <th>Destino</th>
+                                    <th>Cantidad</th>
+                                    <th>Descripción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transfers-list">
+                                <!-- Las transferencias se cargarán aquí dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Sección de Perfil -->
+                <section id="profile-section" class="content-section">
+                    <h2>Mi Perfil</h2>
+                    <div class="profile-info">
+                        <div class="info-item">
+                            <label>Nombre:</label>
+                            <span id="profile-name">-</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Email:</label>
+                            <span id="profile-email">-</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Teléfono:</label>
+                            <span id="profile-phone">-</span>
+                        </div>
+                        <div class="info-item">
+                            <label>Dirección:</label>
+                            <span id="profile-address">-</span>
+                        </div>
+                    </div>
+                    <button id="edit-profile-btn">Editar Perfil</button>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para nueva cuenta -->
+    <div id="new-account-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Abrir Nueva Cuenta</h2>
+            <form id="new-account-form">
+                <div class="form-group">
+                    <label for="account-type">Tipo de cuenta:</label>
+                    <select id="account-type" required>
+                        <option value="checking">Cuenta Corriente</option>
+                        <option value="savings">Cuenta de Ahorros</option>
+                    </select>
+                </div>
+                <button type="submit">Abrir Cuenta</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para editar perfil -->
+    <div id="edit-profile-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Editar Perfil</h2>
+            <form id="edit-profile-form">
+                <div class="form-group">
+                    <label for="edit-name">Nombre:</label>
+                    <input type="text" id="edit-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-email">Email:</label>
+                    <input type="email" id="edit-email" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="edit-phone">Teléfono:</label>
+                    <input type="tel" id="edit-phone">
+                </div>
+                <div class="form-group">
+                    <label for="edit-address">Dirección:</label>
+                    <input type="text" id="edit-address">
+                </div>
+                <button type="submit">Guardar Cambios</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
