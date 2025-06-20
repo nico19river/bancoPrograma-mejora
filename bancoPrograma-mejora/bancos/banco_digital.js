@@ -590,3 +590,103 @@ displayUserInfo();
 displayAccounts();
 populateAccountSelects();
 displayTransfers();
+
+class BancoDigitalMejorado extends Banco {
+  constructor(nombre) {
+    super(nombre);
+    this.bancoCentral = new BancoCentral();
+    this.configurarEventosInterbancarios();
+  }
+
+  configurarEventosInterbancarios() {
+    // Escuchar transferencias interbancarias entrantes
+    window.addEventListener('transferenciaInterbancaria', (event) => {
+      const transferencia = event.detail;
+      if (transferencia.destinoBanco === this.nombre) {
+        this.procesarTransferenciaEntrante(transferencia);
+      }
+    });
+  }
+
+  procesarTransferenciaEntrante(transferencia) {
+    // Buscar la cuenta destino
+    const cuentaDestino = this.cuentas.find(c => c.numero === transferencia.cuentaDestino);
+    if (cuentaDestino) {
+      // Agregar fondos a la cuenta destino
+      cuentaDestino.saldo += transferencia.monto;
+      
+      // Registrar la transferencia en el historial local
+      const transferenciaLocal = new Transferencia(
+        transferencia.fecha,
+        `${transferencia.origenBanco}-${transferencia.cuentaOrigen}`,
+        transferencia.cuentaDestino,
+        transferencia.monto,
+        `${transferencia.descripcion} (desde ${transferencia.origenBanco})`,
+        transferencia.titularOrigen,
+        transferencia.titularDestino
+      );
+      
+      this.transferencias.push(transferenciaLocal);
+      
+      // Guardar cambios
+      saveDataToLocalStorage();
+      
+      // Actualizar interfaz si está visible
+      if (typeof displayAccounts === 'function') displayAccounts();
+      if (typeof displayTransfers === 'function') displayTransfers();
+      
+      console.log(`Transferencia recibida: $${transferencia.monto} de ${transferencia.origenBanco}`);
+    }
+  }
+
+  realizarTransferenciaInterbancaria(cuentaOrigen, destinoCBUoAlias, monto, descripcion) {
+    // Verificar que la cuenta origen pertenezca a este banco
+    const cuenta = this.cuentas.find(c => c.numero === cuentaOrigen);
+    if (!cuenta) {
+      throw new Error("Cuenta origen no encontrada");
+    }
+
+    if (cuenta.saldo < monto) {
+      throw new Error("Fondos insuficientes");
+    }
+
+    // Verificar el destino en el banco central
+    const infoDestino = this.bancoCentral.obtenerInfoCuenta(destinoCBUoAlias);
+    if (!infoDestino) {
+      throw new Error("Destino no encontrado en el sistema interbancario");
+    }
+
+    try {
+      // Procesar la transferencia a través del banco central
+      const transferencia = this.bancoCentral.procesarTransferenciaInterbancaria(
+        this.nombre,
+        cuenta.numero,
+        cuenta.usuario.nombre,
+        destinoCBUoAlias,
+        monto,
+        descripcion
+      );
+
+      // Descontar fondos de la cuenta origen
+      cuenta.saldo -= monto;
+
+      // Registrar la transferencia localmente
+      const transferenciaLocal = new Transferencia(
+        transferencia.fecha,
+        cuenta.numero,
+        `${transferencia.destinoBanco}-${transferencia.cuentaDestino}`,
+        monto,
+        `${descripcion} (hacia ${transferencia.destinoBanco})`,
+        transferencia.titularOrigen,
+        transferencia.titularDestino
+      );
+
+      this.transferencias.push(transferenciaLocal);
+      
+      return transferencia;
+
+    } catch (error) {
+      throw new Error(`Error en transferencia interbancaria: ${error.message}`);
+    }
+  }
+}
