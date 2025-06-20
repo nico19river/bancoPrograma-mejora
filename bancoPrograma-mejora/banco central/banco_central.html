@@ -9,74 +9,14 @@
 <body>
   <div class="app-container">
     <header>
-      <h1>Banco Central</h1>
+      <h1>Banco Central - Registro de Transferencias Interbancarias</h1>
     </header>
 
     <div class="main-content">
       <div class="content-area">
-        <!-- Registro de Alias y CBU -->
-        <section>
-          <h2>Registro de Cuentas</h2>
-          <form id="registro-form">
-            <div class="form-group">
-              <label for="cbu">CBU:</label>
-              <input type="text" id="cbu" required>
-            </div>
-            <div class="form-group">
-              <label for="alias">Alias:</label>
-              <input type="text" id="alias" required>
-            </div>
-            <div class="form-group">
-              <label for="banco">Banco:</label>
-              <input type="text" id="banco" required>
-            </div>
-            <div class="form-group">
-              <label for="cuenta">Número de Cuenta:</label>
-              <input type="text" id="cuenta" required>
-            </div>
-            <div class="form-group">
-              <label for="titular">Nombre del Titular:</label>
-              <input type="text" id="titular" required>
-            </div>
-            <div class="form-group">
-              <label for="email">Email del Titular:</label>
-              <input type="email" id="email" required>
-            </div>
-            <button type="submit">Registrar Cuenta</button>
-          </form>
-        </section>
-
-        <!-- Transferencias -->
-        <section>
-          <h2>Transferencia Interbancaria</h2>
-          <form id="transferencia-form">
-            <div class="form-group">
-              <label for="origen-banco">Banco Origen:</label>
-              <input type="text" id="origen-banco" required>
-            </div>
-            <div class="form-group">
-              <label for="cuenta-origen">Cuenta Origen:</label>
-              <input type="text" id="cuenta-origen" required>
-            </div>
-            <div class="form-group">
-              <label for="destino">CBU o Alias destino:</label>
-              <input type="text" id="destino" required>
-            </div>
-            <div class="form-group">
-              <label for="monto">Monto:</label>
-              <input type="number" id="monto" min="0.01" step="0.01" required>
-            </div>
-            <div class="form-group">
-              <label for="descripcion">Descripción:</label>
-              <input type="text" id="descripcion">
-            </div>
-            <button type="submit">Enviar Transferencia</button>
-          </form>
-        </section>
-
         <!-- Historial de Transferencias -->
         <section>
-          <h2>Historial de Transferencias</h2>
+          <h2>Transferencias Registradas</h2>
           <table>
             <thead>
               <tr>
@@ -85,8 +25,8 @@
                 <th>Cuenta Origen</th>
                 <th>Banco Destino</th>
                 <th>Cuenta Destino</th>
-                <th>CBU</th>
-                <th>Titular</th>
+                <th>CBU/Alias</th>
+                <th>Titular Destino</th>
                 <th>Monto</th>
                 <th>Descripción</th>
               </tr>
@@ -101,49 +41,7 @@
   <script src="banco_central.js"></script>
   <script>
     const bancoCentral = new BancoCentral();
-
-    const formRegistro = document.getElementById('registro-form');
-    const formTransferencia = document.getElementById('transferencia-form');
     const historialTable = document.getElementById('historial-transferencias');
-
-    formRegistro.addEventListener('submit', e => {
-      e.preventDefault();
-      try {
-        bancoCentral.registrarCuenta(
-          document.getElementById('cbu').value,
-          document.getElementById('alias').value,
-          document.getElementById('banco').value,
-          document.getElementById('cuenta').value,
-          {
-            nombre: document.getElementById('titular').value,
-            email: document.getElementById('email').value
-          }
-        );
-        alert("Cuenta registrada correctamente");
-        formRegistro.reset();
-        renderHistorial();
-      } catch (err) {
-        alert(err.message);
-      }
-    });
-
-    formTransferencia.addEventListener('submit', e => {
-      e.preventDefault();
-      try {
-        bancoCentral.transferirEntreBancos(
-          document.getElementById('origen-banco').value,
-          document.getElementById('cuenta-origen').value,
-          document.getElementById('destino').value,
-          parseFloat(document.getElementById('monto').value),
-          document.getElementById('descripcion').value
-        );
-        alert("Transferencia realizada con éxito");
-        formTransferencia.reset();
-        renderHistorial();
-      } catch (err) {
-        alert(err.message);
-      }
-    });
 
     function renderHistorial() {
       historialTable.innerHTML = "";
@@ -166,5 +64,6 @@
 
     renderHistorial();
   </script>
+</body>
 </body>
 </html>

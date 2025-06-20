@@ -125,3 +125,19 @@ bancoProvincial.cargarDesdeLocalStorage();
 const bancoCentral = new BancoCentral();
 bancoProvincial.procesarTransferenciasEntrantesDesdeCentral(bancoCentral);
 bancoProvincial.guardarEnLocalStorage();
+
+// Navegación entre secciones
+const menuButtons = document.querySelectorAll(".menu-btn");
+const contentSections = document.querySelectorAll(".content-section");
+
+menuButtons.forEach(button => {
+  button.addEventListener("click", () => {
+    const target = button.getAttribute("data-section");
+
+    menuButtons.forEach(btn => btn.classList.remove("active"));
+    contentSections.forEach(section => section.classList.remove("active"));
+
+    button.classList.add("active");
+    document.getElementById(`${target}-section`).classList.add("active");
+  });
+});
